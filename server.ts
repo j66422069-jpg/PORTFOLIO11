@@ -293,9 +293,9 @@ async function startServer() {
         (body.type && String(body.type).trim()) ||
         "shoot";
 
-      console.log("body.project_type", body.project_type)
-      console.log("body.type", body.type)
-      console.log("normalizedProjectType", normalizedProjectType)
+      console.log("body.project_type", body.project_type);
+      console.log("body.type", body.type);
+      console.log("normalizedProjectType", normalizedProjectType);
 
       const row = {
         title: title,
@@ -316,6 +316,8 @@ async function startServer() {
         project_type: normalizedProjectType,
         updated_at: new Date().toISOString()
       };
+
+      console.log("insert row", row);
 
       const info = db.prepare(`
         INSERT INTO projects (
@@ -367,9 +369,9 @@ async function startServer() {
         (body.type && String(body.type).trim()) ||
         "shoot";
 
-      console.log("body.project_type", body.project_type)
-      console.log("body.type", body.type)
-      console.log("normalizedProjectType", normalizedProjectType)
+      console.log("body.project_type", body.project_type);
+      console.log("body.type", body.type);
+      console.log("normalizedProjectType", normalizedProjectType);
 
       const row = {
         title: title,
@@ -390,6 +392,8 @@ async function startServer() {
         project_type: normalizedProjectType,
         updated_at: new Date().toISOString()
       };
+
+      console.log("update row", row);
 
       const result = db.prepare(`
         UPDATE projects SET 
@@ -457,9 +461,9 @@ async function startServer() {
         (body.type && String(body.type).trim()) ||
         "shoot";
 
-      console.log("body.project_type", body.project_type)
-      console.log("body.type", body.type)
-      console.log("normalizedProjectType", normalizedProjectType)
+      console.log("body.project_type", body.project_type);
+      console.log("body.type", body.type);
+      console.log("normalizedProjectType", normalizedProjectType);
 
       const row = {
         title: title,
@@ -480,6 +484,8 @@ async function startServer() {
         project_type: normalizedProjectType,
         updated_at: new Date().toISOString()
       };
+
+      console.log("update row", row);
 
       const result = db.prepare(`
         UPDATE projects SET 
