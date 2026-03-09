@@ -304,6 +304,8 @@ export default function Admin() {
     }
     
     // Log payload for verification
+    console.log("selected project_type", editingProject.project_type);
+    console.log("project create payload", projectToSave);
     console.log(`[SAVE PROJECT] Method: ${method}, Payload:`, projectToSave);
     
     try {
