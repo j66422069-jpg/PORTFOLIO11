@@ -304,9 +304,11 @@ export default function Admin() {
     }
     
     // Log payload for verification
-    console.log("selected project_type", editingProject.project_type);
-    console.log("project create payload", projectToSave);
-    console.log(`[SAVE PROJECT] Method: ${method}, Payload:`, projectToSave);
+    const selectedProjectType = editingProject.project_type;
+    const payload = projectToSave;
+    console.log("selected project_type", selectedProjectType);
+    console.log("create payload", payload);
+    console.log(`[SAVE PROJECT] Method: ${method}, Payload:`, payload);
     
     try {
       const res = await fetch(url, {

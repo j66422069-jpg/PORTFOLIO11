@@ -304,7 +304,7 @@ async function startServer() {
         description: description || null,
         sort_order: body.sort_order ?? 0,
         home_order: body.home_order ?? 0,
-        project_type: body.project_type ?? 'shoot',
+        project_type: body.project_type ?? "shoot",
         updated_at: new Date().toISOString()
       };
 
@@ -371,7 +371,7 @@ async function startServer() {
         description: description || null,
         sort_order: body.sort_order !== undefined ? body.sort_order : 0,
         home_order: body.home_order !== undefined ? body.home_order : 0,
-        project_type: body.project_type ?? 'shoot',
+        project_type: body.project_type ?? "shoot",
         updated_at: new Date().toISOString()
       };
 
@@ -454,11 +454,11 @@ async function startServer() {
         description: description || null,
         sort_order: body.sort_order !== undefined ? body.sort_order : 0,
         home_order: body.home_order !== undefined ? body.home_order : 0,
-        project_type: body.project_type || 'shoot',
+        project_type: body.project_type ?? "shoot",
         updated_at: new Date().toISOString()
       };
 
-      console.log("saved project_type", row.project_type);
+      console.log("saved project_type", body.project_type);
 
       const result = db.prepare(`
         UPDATE projects SET 
