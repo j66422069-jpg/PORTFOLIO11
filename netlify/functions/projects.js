@@ -67,7 +67,7 @@ export const handler = async (event) => {
         const { data, error } = await supabase
           .from('projects')
           .select('*')
-          .order('sort_order', { ascending: true, nullsFirst: false });
+          .order('year', { ascending: false });
         if (error) throw error;
 
         const mappedData = data.map(p => ({
@@ -95,24 +95,14 @@ export const handler = async (event) => {
     }
 
     const payload = JSON.parse(body || '{}');
-    if ((httpMethod === 'POST' || httpMethod === 'PUT') && payload.project_type === 'edit') {
-  return {
-    statusCode: 418,
-    body: JSON.stringify({
-      debug: true,
-      message: 'projects.js is definitely running',
-      method: httpMethod,
-      project_type: payload.project_type
-    })
-  };
-}
     const normalizedProjectType =
-      console.log('payload.project_type', payload.project_type);
-console.log('payload.type', payload.type);
-console.log('normalizedProjectType', normalizedProjectType);
-  (payload.project_type && String(payload.project_type).trim()) ||
-  (payload.type && String(payload.type).trim()) ||
-  'shoot';
+      (payload.project_type && String(payload.project_type).trim()) ||
+      (payload.type && String(payload.type).trim()) ||
+      "shoot";
+
+    console.log("payload.project_type", payload.project_type);
+    console.log("normalizedProjectType", normalizedProjectType);
+
     const path = event.path || '';
     const isReorder = path.endsWith('/reorder');
     const isReorderHome = path.endsWith('/reorder-home');
@@ -147,23 +137,23 @@ console.log('normalizedProjectType', normalizedProjectType);
 
     if (httpMethod === 'POST') {
       const { videos, tech, ...body } = payload;
-const row = {
-  title: body.title ?? "",
-  description: body.description ?? null,
-  category: body.category ?? body.format ?? null,
-  year: body.year ?? null,
-  featured: body.featured ?? false,
-  role: body.role ?? null,
-  summary: body.summary ?? null,
-  thumbnail_url: body.thumbnailUrl ?? body.thumbnail_url ?? null,
-  tech_camera: tech?.camera ?? body.techCamera ?? body.tech_camera ?? null,
-  tech_lens: tech?.lens ?? body.techLens ?? body.tech_lens ?? null,
-  tech_lighting: tech?.lighting ?? body.techLighting ?? body.tech_lighting ?? null,
-  tech_color: tech?.color ?? body.techColor ?? body.tech_color ?? null,
-  link: body.link ?? null,
-  project_type: normalizedProjectType,
-  updated_at: new Date().toISOString()
-};
+      const row = {
+        title: body.title ?? "",
+        description: body.description ?? null,
+        category: body.category ?? body.format ?? null,
+        year: body.year ?? null,
+        featured: body.featured ?? false,
+        role: body.role ?? null,
+        summary: body.summary ?? null,
+        thumbnail_url: body.thumbnailUrl ?? body.thumbnail_url ?? null,
+        tech_camera: tech?.camera ?? body.techCamera ?? body.tech_camera ?? null,
+        tech_lens: tech?.lens ?? body.techLens ?? body.tech_lens ?? null,
+        tech_lighting: tech?.lighting ?? body.techLighting ?? body.tech_lighting ?? null,
+        tech_color: tech?.color ?? body.techColor ?? body.tech_color ?? null,
+        link: body.link ?? null,
+        project_type: normalizedProjectType,
+        updated_at: new Date().toISOString()
+      };
 
       const { data: project, error: pError } = await supabase
         .from('projects')
@@ -199,23 +189,23 @@ const row = {
       if (!id) throw new Error('ID is required');
 
       const { videos, tech, ...body } = payload;
-const row = {
-  title: body.title ?? "",
-  description: body.description ?? null,
-  category: body.category ?? body.format ?? null,
-  year: body.year ?? null,
-  featured: body.featured ?? false,
-  role: body.role ?? null,
-  summary: body.summary ?? null,
-  thumbnail_url: body.thumbnailUrl ?? body.thumbnail_url ?? null,
-  tech_camera: tech?.camera ?? body.techCamera ?? body.tech_camera ?? null,
-  tech_lens: tech?.lens ?? body.techLens ?? body.tech_lens ?? null,
-  tech_lighting: tech?.lighting ?? body.techLighting ?? body.tech_lighting ?? null,
-  tech_color: tech?.color ?? body.techColor ?? body.tech_color ?? null,
-  link: body.link ?? null,
-  project_type: normalizedProjectType,
-  updated_at: new Date().toISOString()
-};
+      const row = {
+        title: body.title ?? "",
+        description: body.description ?? null,
+        category: body.category ?? body.format ?? null,
+        year: body.year ?? null,
+        featured: body.featured ?? false,
+        role: body.role ?? null,
+        summary: body.summary ?? null,
+        thumbnail_url: body.thumbnailUrl ?? body.thumbnail_url ?? null,
+        tech_camera: tech?.camera ?? body.techCamera ?? body.tech_camera ?? null,
+        tech_lens: tech?.lens ?? body.techLens ?? body.tech_lens ?? null,
+        tech_lighting: tech?.lighting ?? body.techLighting ?? body.tech_lighting ?? null,
+        tech_color: tech?.color ?? body.techColor ?? body.tech_color ?? null,
+        link: body.link ?? null,
+        project_type: normalizedProjectType,
+        updated_at: new Date().toISOString()
+      };
 
       const { error: pError } = await supabase
         .from('projects')
