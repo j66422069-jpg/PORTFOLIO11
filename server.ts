@@ -288,6 +288,15 @@ async function startServer() {
         return res.status(400).json({ error: "Cannot create an empty project row. Title, description, or thumbnail is required." });
       }
 
+      const normalizedProjectType =
+        (body.project_type && String(body.project_type).trim()) ||
+        (body.type && String(body.type).trim()) ||
+        "shoot";
+
+      console.log("body.project_type", body.project_type)
+      console.log("body.type", body.type)
+      console.log("normalizedProjectType", normalizedProjectType)
+
       const row = {
         title: title,
         year: body.year ?? null,
@@ -304,11 +313,9 @@ async function startServer() {
         description: description || null,
         sort_order: body.sort_order ?? 0,
         home_order: body.home_order ?? 0,
-        project_type: body.project_type ?? "shoot",
+        project_type: normalizedProjectType,
         updated_at: new Date().toISOString()
       };
-
-      console.log("saved project_type", body.project_type);
 
       const info = db.prepare(`
         INSERT INTO projects (
@@ -355,6 +362,15 @@ async function startServer() {
         return res.status(400).json({ error: "Cannot update to an empty project row. Title, description, or thumbnail is required." });
       }
 
+      const normalizedProjectType =
+        (body.project_type && String(body.project_type).trim()) ||
+        (body.type && String(body.type).trim()) ||
+        "shoot";
+
+      console.log("body.project_type", body.project_type)
+      console.log("body.type", body.type)
+      console.log("normalizedProjectType", normalizedProjectType)
+
       const row = {
         title: title,
         year: body.year ?? null,
@@ -371,11 +387,9 @@ async function startServer() {
         description: description || null,
         sort_order: body.sort_order !== undefined ? body.sort_order : 0,
         home_order: body.home_order !== undefined ? body.home_order : 0,
-        project_type: body.project_type ?? "shoot",
+        project_type: normalizedProjectType,
         updated_at: new Date().toISOString()
       };
-
-      console.log("saved project_type", body.project_type);
 
       const result = db.prepare(`
         UPDATE projects SET 
@@ -438,6 +452,15 @@ async function startServer() {
         return res.status(400).json({ error: "Cannot update to an empty project row. Title, description, or thumbnail is required." });
       }
 
+      const normalizedProjectType =
+        (body.project_type && String(body.project_type).trim()) ||
+        (body.type && String(body.type).trim()) ||
+        "shoot";
+
+      console.log("body.project_type", body.project_type)
+      console.log("body.type", body.type)
+      console.log("normalizedProjectType", normalizedProjectType)
+
       const row = {
         title: title,
         year: body.year ?? null,
@@ -454,11 +477,9 @@ async function startServer() {
         description: description || null,
         sort_order: body.sort_order !== undefined ? body.sort_order : 0,
         home_order: body.home_order !== undefined ? body.home_order : 0,
-        project_type: body.project_type ?? "shoot",
+        project_type: normalizedProjectType,
         updated_at: new Date().toISOString()
       };
-
-      console.log("saved project_type", body.project_type);
 
       const result = db.prepare(`
         UPDATE projects SET 
