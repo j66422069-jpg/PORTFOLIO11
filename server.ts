@@ -27,6 +27,7 @@ db.exec(`
     featured INTEGER DEFAULT 0,
     sort_order INTEGER DEFAULT 0,
     home_order INTEGER DEFAULT 0,
+    project_type TEXT DEFAULT 'shoot',
     thumbnail_url TEXT,
     tech_camera TEXT,
     tech_lens TEXT,
@@ -87,6 +88,9 @@ try {
   }
   if (!projectCols.some(c => c.name === "home_order")) {
     db.exec("ALTER TABLE projects ADD COLUMN home_order INTEGER DEFAULT 0");
+  }
+  if (!projectCols.some(c => c.name === "project_type")) {
+    db.exec("ALTER TABLE projects ADD COLUMN project_type TEXT DEFAULT 'shoot'");
   }
 } catch (e) {
   console.error("Migration failed:", e);
@@ -300,20 +304,23 @@ async function startServer() {
         description: description || null,
         sort_order: body.sort_order ?? 0,
         home_order: body.home_order ?? 0,
+        project_type: body.project_type || 'shoot',
         updated_at: new Date().toISOString()
       };
+
+      console.log("saved project_type", row.project_type);
 
       const info = db.prepare(`
         INSERT INTO projects (
           title, year, type, role, summary, featured, thumbnail_url, 
           tech_camera, tech_lens, tech_lighting, tech_color, 
-          link, description, sort_order, home_order, updated_at
+          link, description, sort_order, home_order, project_type, updated_at
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `).run(
         row.title, row.year, row.type, row.role, row.summary, row.featured, row.thumbnail_url,
         row.tech_camera, row.tech_lens, row.tech_lighting, row.tech_color,
-        row.link, row.description, row.sort_order, row.home_order, row.updated_at
+        row.link, row.description, row.sort_order, row.home_order, row.project_type, row.updated_at
       );
       
       const projectId = info.lastInsertRowid;
@@ -364,19 +371,22 @@ async function startServer() {
         description: description || null,
         sort_order: body.sort_order !== undefined ? body.sort_order : 0,
         home_order: body.home_order !== undefined ? body.home_order : 0,
+        project_type: body.project_type || 'shoot',
         updated_at: new Date().toISOString()
       };
+
+      console.log("saved project_type", row.project_type);
 
       const result = db.prepare(`
         UPDATE projects SET 
           title = ?, year = ?, type = ?, role = ?, summary = ?, featured = ?, thumbnail_url = ?,
           tech_camera = ?, tech_lens = ?, tech_lighting = ?, tech_color = ?,
-          link = ?, description = ?, sort_order = ?, home_order = ?, updated_at = ?
+          link = ?, description = ?, sort_order = ?, home_order = ?, project_type = ?, updated_at = ?
         WHERE id = ?
       `).run(
         row.title, row.year, row.type, row.role, row.summary, row.featured, row.thumbnail_url,
         row.tech_camera, row.tech_lens, row.tech_lighting, row.tech_color,
-        row.link, row.description, row.sort_order, row.home_order, row.updated_at,
+        row.link, row.description, row.sort_order, row.home_order, row.project_type, row.updated_at,
         id
       );
 
@@ -444,19 +454,22 @@ async function startServer() {
         description: description || null,
         sort_order: body.sort_order !== undefined ? body.sort_order : 0,
         home_order: body.home_order !== undefined ? body.home_order : 0,
+        project_type: body.project_type || 'shoot',
         updated_at: new Date().toISOString()
       };
+
+      console.log("saved project_type", row.project_type);
 
       const result = db.prepare(`
         UPDATE projects SET 
           title = ?, year = ?, type = ?, role = ?, summary = ?, featured = ?, thumbnail_url = ?,
           tech_camera = ?, tech_lens = ?, tech_lighting = ?, tech_color = ?,
-          link = ?, description = ?, sort_order = ?, home_order = ?, updated_at = ?
+          link = ?, description = ?, sort_order = ?, home_order = ?, project_type = ?, updated_at = ?
         WHERE id = ?
       `).run(
         row.title, row.year, row.type, row.role, row.summary, row.featured, row.thumbnail_url,
         row.tech_camera, row.tech_lens, row.tech_lighting, row.tech_color,
-        row.link, row.description, row.sort_order, row.home_order, row.updated_at,
+        row.link, row.description, row.sort_order, row.home_order, row.project_type, row.updated_at,
         id
       );
 

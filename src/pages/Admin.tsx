@@ -27,6 +27,7 @@ export default function Admin() {
   const [contactDescription, setContactDescription] = useState("");
   const [hasOrderChanged, setHasOrderChanged] = useState(false);
   const [hasHomeOrderChanged, setHasHomeOrderChanged] = useState(false);
+  const [adminProjectFilter, setAdminProjectFilter] = useState<'shoot' | 'edit'>('shoot');
 
   useEffect(() => {
     const token = sessionStorage.getItem("admin_token");
@@ -113,6 +114,7 @@ export default function Admin() {
       featured: false,
       sort_order: 0,
       home_order: 0,
+      project_type: "shoot",
       thumbnailUrl: "",
       tech: { camera: "", lens: "", lighting: "", color: "" },
       videos: []
@@ -849,6 +851,28 @@ export default function Admin() {
                 </div>
               </div>
 
+              {/* Admin Project Filter */}
+              {!editingProject && (
+                <div className="flex bg-black/5 p-1 rounded-lg w-fit">
+                  <button
+                    onClick={() => setAdminProjectFilter('shoot')}
+                    className={`px-6 py-2 text-[10px] font-bold tracking-widest uppercase transition-all rounded-md ${
+                      adminProjectFilter === 'shoot' ? 'bg-white text-black shadow-sm' : 'text-black/40 hover:text-black'
+                    }`}
+                  >
+                    촬영 (SHOOT)
+                  </button>
+                  <button
+                    onClick={() => setAdminProjectFilter('edit')}
+                    className={`px-6 py-2 text-[10px] font-bold tracking-widest uppercase transition-all rounded-md ${
+                      adminProjectFilter === 'edit' ? 'bg-white text-black shadow-sm' : 'text-black/40 hover:text-black'
+                    }`}
+                  >
+                    편집 (EDIT)
+                  </button>
+                </div>
+              )}
+
               {editingProject ? (
                 <div className="space-y-8 border-t border-black/5 pt-8">
                   <div className="flex items-center justify-between">
@@ -892,6 +916,29 @@ export default function Admin() {
                         onChange={(e) => setEditingProject({ ...editingProject, role: e.target.value })}
                         className="w-full px-4 py-3 border border-black/10 text-sm focus:outline-none focus:border-black"
                       />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold tracking-widest uppercase text-black/40 mb-2">프로젝트 구분</label>
+                      <div className="flex bg-black/5 p-1 rounded-lg">
+                        <button
+                          type="button"
+                          onClick={() => setEditingProject({ ...editingProject, project_type: 'shoot' })}
+                          className={`flex-1 py-2 text-[10px] font-bold tracking-widest uppercase transition-all rounded-md ${
+                            (editingProject.project_type || 'shoot') === 'shoot' ? 'bg-white text-black shadow-sm' : 'text-black/40 hover:text-black'
+                          }`}
+                        >
+                          촬영 (SHOOT)
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setEditingProject({ ...editingProject, project_type: 'edit' })}
+                          className={`flex-1 py-2 text-[10px] font-bold tracking-widest uppercase transition-all rounded-md ${
+                            editingProject.project_type === 'edit' ? 'bg-white text-black shadow-sm' : 'text-black/40 hover:text-black'
+                          }`}
+                        >
+                          편집 (EDIT)
+                        </button>
+                      </div>
                     </div>
                   </div>
 
@@ -1080,22 +1127,46 @@ export default function Admin() {
               ) : (
                 <div className="grid grid-cols-1 gap-4">
                   {(Array.isArray(projects) ? projects : [])
+                    .filter(p => (p.project_type || 'shoot') === adminProjectFilter)
                     .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
-                    .map((p, index) => (
+                    .map((p, index, filteredArr) => (
                     <div key={p.id} className="flex items-center justify-between p-6 border border-black/5 hover:border-black/20 transition-colors">
                       <div className="flex items-center gap-6">
                         <div className="flex flex-col gap-1">
                           <button 
-                            onClick={() => moveProject(index, 'up')}
+                            onClick={() => {
+                              // Find index in original projects array
+                              const originalIndex = projects.findIndex(proj => proj.id === p.id);
+                              const prevInFiltered = filteredArr[index - 1];
+                              if (prevInFiltered) {
+                                const prevOriginalIndex = projects.findIndex(proj => proj.id === prevInFiltered.id);
+                                const newProjects = [...projects];
+                                [newProjects[originalIndex], newProjects[prevOriginalIndex]] = [newProjects[prevOriginalIndex], newProjects[originalIndex]];
+                                const updated = newProjects.map((proj, idx) => ({ ...proj, sort_order: idx + 1 }));
+                                setProjects(updated);
+                                setHasOrderChanged(true);
+                              }
+                            }}
                             disabled={index === 0}
                             className={`p-1 ${index === 0 ? 'text-black/5' : 'text-black/20 hover:text-black'}`}
                           >
                             <ArrowUp size={14} />
                           </button>
                           <button 
-                            onClick={() => moveProject(index, 'down')}
-                            disabled={index === projects.length - 1}
-                            className={`p-1 ${index === projects.length - 1 ? 'text-black/5' : 'text-black/20 hover:text-black'}`}
+                            onClick={() => {
+                              const originalIndex = projects.findIndex(proj => proj.id === p.id);
+                              const nextInFiltered = filteredArr[index + 1];
+                              if (nextInFiltered) {
+                                const nextOriginalIndex = projects.findIndex(proj => proj.id === nextInFiltered.id);
+                                const newProjects = [...projects];
+                                [newProjects[originalIndex], newProjects[nextOriginalIndex]] = [newProjects[nextOriginalIndex], newProjects[originalIndex]];
+                                const updated = newProjects.map((proj, idx) => ({ ...proj, sort_order: idx + 1 }));
+                                setProjects(updated);
+                                setHasOrderChanged(true);
+                              }
+                            }}
+                            disabled={index === filteredArr.length - 1}
+                            className={`p-1 ${index === filteredArr.length - 1 ? 'text-black/5' : 'text-black/20 hover:text-black'}`}
                           >
                             <ArrowDown size={14} />
                           </button>
@@ -1105,7 +1176,9 @@ export default function Admin() {
                         </div>
                         <div>
                           <h4 className="font-bold">{p.title}</h4>
-                          <p className="text-[10px] font-bold tracking-widest text-black/40 uppercase">{p.year} — {p.type}</p>
+                          <p className="text-[10px] font-bold tracking-widest text-black/40 uppercase">
+                            {p.year} — {p.type} — <span className={p.project_type === 'edit' ? 'text-blue-500' : 'text-orange-500'}>{p.project_type === 'edit' ? 'EDIT' : 'SHOOT'}</span>
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-4">

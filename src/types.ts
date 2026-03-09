@@ -34,6 +34,7 @@ export interface ProjectData {
   featured: boolean;
   sort_order?: number;
   home_order?: number;
+  project_type?: 'shoot' | 'edit';
   thumbnailUrl: string;
   tech: {
     camera: string;
