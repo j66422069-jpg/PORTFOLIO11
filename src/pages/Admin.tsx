@@ -295,26 +295,28 @@ export default function Admin() {
     const url = editingProject.id ? `/api/projects?id=${editingProject.id}` : "/api/projects";
     
     // For new projects, set sort_order to be at the top
-    const projectToSave = { ...editingProject };
-    if (!projectToSave.id) {
+    const selectedProjectType = editingProject.project_type || "shoot";
+    const payload = { 
+      ...editingProject,
+      project_type: selectedProjectType
+    };
+
+    if (!payload.id) {
       const minOrder = projects.length > 0 
         ? Math.min(...projects.map(p => p.sort_order || 0)) 
         : 0;
-      projectToSave.sort_order = minOrder - 1;
+      payload.sort_order = minOrder - 1;
     }
     
-    // Log payload for verification
-    const selectedProjectType = editingProject.project_type;
-    const payload = projectToSave;
-    console.log("selected project_type", selectedProjectType);
-    console.log("create payload", payload);
-    console.log(`[SAVE PROJECT] Method: ${method}, Payload:`, payload);
+    // Mandatory logs as requested
+    console.log("project_type selected:", selectedProjectType)
+    console.log("project payload:", payload)
     
     try {
       const res = await fetch(url, {
         method,
         headers: getAuthHeaders(),
-        body: JSON.stringify(projectToSave),
+        body: JSON.stringify(payload),
       });
       
       if (await handleAuthError(res)) return;
