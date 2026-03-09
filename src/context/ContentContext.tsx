@@ -40,6 +40,7 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
       if (res.ok) {
         const data = await res.json();
         setContent(data);
+        console.log("HOME content fetched");
       }
     } catch (error) {
       console.error("Failed to fetch content:", error);
@@ -121,9 +122,9 @@ export const ContentProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   useEffect(() => {
     fetchContent();
-    fetchProjects();
-    fetchEquipment();
-  }, [fetchContent, fetchProjects, fetchEquipment]);
+    // Projects and Equipment are now fetched on-demand by their respective pages
+    // to optimize initial HOME page loading speed.
+  }, [fetchContent]);
 
   return (
     <ContentContext.Provider value={{ 

@@ -6,7 +6,21 @@ import { HomeData, ProjectData } from "../types";
 import { useContent } from "../context/ContentContext";
 
 export default function Home() {
-  const { content, projects, loading: contentLoading, projectsLoaded } = useContent();
+  const { content, projects, loading: contentLoading, projectsLoaded, fetchProjects } = useContent();
+
+  useEffect(() => {
+    console.log("HOME initial load");
+    // Only fetch projects if they aren't already loaded to avoid redundant calls
+    if (!projectsLoaded) {
+      fetchProjects();
+    }
+  }, [projectsLoaded, fetchProjects]);
+
+  useEffect(() => {
+    if (!contentLoading && content) {
+      console.log("HOME render complete");
+    }
+  }, [contentLoading, content]);
 
   const data: HomeData = {
     name: content?.home_name || "",
@@ -34,8 +48,17 @@ export default function Home() {
       return (a.id || 0) - (b.id || 0);
     });
 
+  // If content is already in cache, we don't show the loading state at all to prevent flicker
   if (contentLoading && !content) {
-    return <div className="max-w-7xl mx-auto px-6 py-20 text-black/20 font-bold tracking-widest uppercase">Loading...</div>;
+    return (
+      <div className="max-w-7xl mx-auto px-6 py-20">
+        <div className="animate-pulse space-y-8">
+          <div className="h-4 bg-black/5 w-24 rounded"></div>
+          <div className="h-16 bg-black/5 w-3/4 rounded"></div>
+          <div className="h-24 bg-black/5 w-1/2 rounded"></div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -47,14 +70,14 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-xs font-bold tracking-[0.3em] text-black/40 uppercase mb-4">
-            {data.role || "Cinematographer / Director"}
+          <h2 className="text-xs font-bold tracking-[0.3em] text-black/40 uppercase mb-4 min-h-[1rem]">
+            {data.role || (contentLoading ? "" : "Cinematographer / Director")}
           </h2>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-8">
-            {data.name || "Director Name"}
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-8 min-h-[3.5rem]">
+            {data.name || (contentLoading ? "" : "Director Name")}
           </h1>
-          <p className="text-xl md:text-2xl text-black/60 max-w-2xl leading-relaxed mb-12 whitespace-pre-line">
-            {data.tagline || "Capturing moments that tell a story."}
+          <p className="text-xl md:text-2xl text-black/60 max-w-2xl leading-relaxed mb-12 whitespace-pre-line min-h-[4rem]">
+            {data.tagline || (contentLoading ? "" : "Capturing moments that tell a story.")}
           </p>
           
           <div className="flex flex-wrap gap-4">
@@ -90,41 +113,54 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {displayProjects.map((project, index) => (
-            <motion.div
-              key={project.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <Link to={`/projects/${project.id}`} className="group block">
-                <div className="aspect-[16/9] overflow-hidden bg-black/5 mb-6">
-                  <img
-                    src={project.thumbnailUrl || "https://picsum.photos/seed/project/800/450"}
-                    alt={project.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
-                    referrerPolicy="no-referrer"
-                  />
-                </div>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="text-lg font-bold tracking-tight mb-1 group-hover:text-black/60 transition-colors">
-                      {project.title}
-                    </h4>
-                    <p className="text-sm text-black/40 font-medium tracking-widest uppercase">
-                      {project.year} — {project.type}
-                    </p>
+        {!projectsLoaded ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="animate-pulse">
+                <div className="aspect-[16/9] bg-black/5 mb-6 rounded"></div>
+                <div className="h-4 bg-black/5 w-1/2 rounded mb-2"></div>
+                <div className="h-3 bg-black/5 w-1/4 rounded"></div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {displayProjects.map((project, index) => (
+              <motion.div
+                key={project.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Link to={`/projects/${project.id}`} className="group block">
+                  <div className="aspect-[16/9] overflow-hidden bg-black/5 mb-6">
+                    <img
+                      src={project.thumbnailUrl || "https://picsum.photos/seed/project/800/450"}
+                      alt={project.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
+                      referrerPolicy="no-referrer"
+                      loading="lazy"
+                    />
                   </div>
-                  <div className="w-10 h-10 border border-black/10 rounded-full flex items-center justify-center group-hover:bg-black group-hover:text-white transition-all duration-300">
-                    <ChevronRight size={20} />
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="text-lg font-bold tracking-tight mb-1 group-hover:text-black/60 transition-colors">
+                        {project.title}
+                      </h4>
+                      <p className="text-sm text-black/40 font-medium tracking-widest uppercase">
+                        {project.year} — {project.type}
+                      </p>
+                    </div>
+                    <div className="w-10 h-10 border border-black/10 rounded-full flex items-center justify-center group-hover:bg-black group-hover:text-white transition-all duration-300">
+                      <ChevronRight size={20} />
+                    </div>
                   </div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );
