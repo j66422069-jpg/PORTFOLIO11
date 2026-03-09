@@ -273,6 +273,9 @@ async function startServer() {
   app.post("/api/projects", (req, res) => {
     try {
       const body = req.body;
+      console.log("body", body);
+      console.log("body.project_type", body.project_type);
+      console.log("body.type", body.type);
       
       // Defensive logic: Prevent empty project creation
       const title = body.title?.trim() || "";
@@ -317,7 +320,7 @@ async function startServer() {
         updated_at: new Date().toISOString()
       };
 
-      console.log("insert row", row);
+      console.log("row", row);
 
       const info = db.prepare(`
         INSERT INTO projects (
@@ -354,6 +357,9 @@ async function startServer() {
       if (!id) return res.status(400).json({ error: "Missing project id" });
       
       const body = req.body;
+      console.log("body", body);
+      console.log("body.project_type", body.project_type);
+      console.log("body.type", body.type);
       
       // Defensive logic: Prevent empty project update
       const title = body.title?.trim() || "";
@@ -393,7 +399,7 @@ async function startServer() {
         updated_at: new Date().toISOString()
       };
 
-      console.log("update row", row);
+      console.log("row", row);
 
       const result = db.prepare(`
         UPDATE projects SET 
@@ -446,6 +452,9 @@ async function startServer() {
       if (!id) return res.status(400).json({ error: "Missing project id" });
 
       const body = req.body;
+      console.log("body", body);
+      console.log("body.project_type", body.project_type);
+      console.log("body.type", body.type);
       
       // Defensive logic: Prevent empty project update
       const title = body.title?.trim() || "";
@@ -485,7 +494,7 @@ async function startServer() {
         updated_at: new Date().toISOString()
       };
 
-      console.log("update row", row);
+      console.log("row", row);
 
       const result = db.prepare(`
         UPDATE projects SET 
