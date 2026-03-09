@@ -95,6 +95,17 @@ export const handler = async (event) => {
     }
 
     const payload = JSON.parse(body || '{}');
+    if ((httpMethod === 'POST' || httpMethod === 'PUT') && payload.project_type === 'edit') {
+  return {
+    statusCode: 418,
+    body: JSON.stringify({
+      debug: true,
+      message: 'projects.js is definitely running',
+      method: httpMethod,
+      project_type: payload.project_type
+    })
+  };
+}
     const normalizedProjectType =
       console.log('payload.project_type', payload.project_type);
 console.log('payload.type', payload.type);
