@@ -33,6 +33,7 @@ db.exec(`
     tech_lens TEXT,
     tech_lighting TEXT,
     tech_color TEXT,
+    tech_software TEXT,
     link TEXT,
     description TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -91,6 +92,9 @@ try {
   }
   if (!projectCols.some(c => c.name === "project_type")) {
     db.exec("ALTER TABLE projects ADD COLUMN project_type TEXT DEFAULT 'shoot'");
+  }
+  if (!projectCols.some(c => c.name === "tech_software")) {
+    db.exec("ALTER TABLE projects ADD COLUMN tech_software TEXT");
   }
 } catch (e) {
   console.error("Migration failed:", e);
@@ -223,7 +227,8 @@ async function startServer() {
           camera: project.tech_camera,
           lens: project.tech_lens,
           lighting: project.tech_lighting,
-          color: project.tech_color
+          color: project.tech_color,
+          software: project.tech_software
         };
         project.videos = db.prepare("SELECT * FROM project_videos WHERE project_id = ?").all(id).map((v: any) => ({
           ...v,
@@ -244,7 +249,8 @@ async function startServer() {
         camera: p.tech_camera,
         lens: p.tech_lens,
         lighting: p.tech_lighting,
-        color: p.tech_color
+        color: p.tech_color,
+        software: p.tech_software
       }
     }));
     res.json(transformed);
@@ -258,7 +264,8 @@ async function startServer() {
         camera: project.tech_camera,
         lens: project.tech_lens,
         lighting: project.tech_lighting,
-        color: project.tech_color
+        color: project.tech_color,
+        software: project.tech_software
       };
       project.videos = db.prepare("SELECT * FROM project_videos WHERE project_id = ?").all(req.params.id).map((v: any) => ({
         ...v,
@@ -312,6 +319,7 @@ async function startServer() {
         tech_lens: body.techLens ?? body.tech?.lens ?? body.tech_lens ?? null,
         tech_lighting: body.techLighting ?? body.tech?.lighting ?? body.tech_lighting ?? null,
         tech_color: body.techColor ?? body.tech?.color ?? body.tech_color ?? null,
+        tech_software: body.techSoftware ?? body.tech?.software ?? body.tech_software ?? null,
         link: body.link ?? null,
         description: description || null,
         sort_order: body.sort_order ?? 0,
@@ -325,13 +333,13 @@ async function startServer() {
       const info = db.prepare(`
         INSERT INTO projects (
           title, year, type, role, summary, featured, thumbnail_url, 
-          tech_camera, tech_lens, tech_lighting, tech_color, 
+          tech_camera, tech_lens, tech_lighting, tech_color, tech_software,
           link, description, sort_order, home_order, project_type, updated_at
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `).run(
         row.title, row.year, row.type, row.role, row.summary, row.featured, row.thumbnail_url,
-        row.tech_camera, row.tech_lens, row.tech_lighting, row.tech_color,
+        row.tech_camera, row.tech_lens, row.tech_lighting, row.tech_color, row.tech_software,
         row.link, row.description, row.sort_order, row.home_order, row.project_type, row.updated_at
       );
       
@@ -391,6 +399,7 @@ async function startServer() {
         tech_lens: body.techLens ?? body.tech?.lens ?? body.tech_lens ?? null,
         tech_lighting: body.techLighting ?? body.tech?.lighting ?? body.tech_lighting ?? null,
         tech_color: body.techColor ?? body.tech?.color ?? body.tech_color ?? null,
+        tech_software: body.techSoftware ?? body.tech?.software ?? body.tech_software ?? null,
         link: body.link ?? null,
         description: description || null,
         sort_order: body.sort_order !== undefined ? body.sort_order : 0,
@@ -404,12 +413,12 @@ async function startServer() {
       const result = db.prepare(`
         UPDATE projects SET 
           title = ?, year = ?, type = ?, role = ?, summary = ?, featured = ?, thumbnail_url = ?,
-          tech_camera = ?, tech_lens = ?, tech_lighting = ?, tech_color = ?,
+          tech_camera = ?, tech_lens = ?, tech_lighting = ?, tech_color = ?, tech_software = ?,
           link = ?, description = ?, sort_order = ?, home_order = ?, project_type = ?, updated_at = ?
         WHERE id = ?
       `).run(
         row.title, row.year, row.type, row.role, row.summary, row.featured, row.thumbnail_url,
-        row.tech_camera, row.tech_lens, row.tech_lighting, row.tech_color,
+        row.tech_camera, row.tech_lens, row.tech_lighting, row.tech_color, row.tech_software,
         row.link, row.description, row.sort_order, row.home_order, row.project_type, row.updated_at,
         id
       );
@@ -486,6 +495,7 @@ async function startServer() {
         tech_lens: body.techLens ?? body.tech?.lens ?? body.tech_lens ?? null,
         tech_lighting: body.techLighting ?? body.tech?.lighting ?? body.tech_lighting ?? null,
         tech_color: body.techColor ?? body.tech?.color ?? body.tech_color ?? null,
+        tech_software: body.techSoftware ?? body.tech?.software ?? body.tech_software ?? null,
         link: body.link ?? null,
         description: description || null,
         sort_order: body.sort_order !== undefined ? body.sort_order : 0,
@@ -499,12 +509,12 @@ async function startServer() {
       const result = db.prepare(`
         UPDATE projects SET 
           title = ?, year = ?, type = ?, role = ?, summary = ?, featured = ?, thumbnail_url = ?,
-          tech_camera = ?, tech_lens = ?, tech_lighting = ?, tech_color = ?,
+          tech_camera = ?, tech_lens = ?, tech_lighting = ?, tech_color = ?, tech_software = ?,
           link = ?, description = ?, sort_order = ?, home_order = ?, project_type = ?, updated_at = ?
         WHERE id = ?
       `).run(
         row.title, row.year, row.type, row.role, row.summary, row.featured, row.thumbnail_url,
-        row.tech_camera, row.tech_lens, row.tech_lighting, row.tech_color,
+        row.tech_camera, row.tech_lens, row.tech_lighting, row.tech_color, row.tech_software,
         row.link, row.description, row.sort_order, row.home_order, row.project_type, row.updated_at,
         id
       );

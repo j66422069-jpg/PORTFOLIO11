@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { motion } from "motion/react";
-import { Camera, Layers, Sun, Palette } from "lucide-react";
+import { Camera, Layers, Sun, Palette, Monitor } from "lucide-react";
 import { useContent } from "../context/ContentContext";
 
 export default function Equipment() {
@@ -10,7 +10,7 @@ export default function Equipment() {
     fetchEquipment();
   }, [fetchEquipment]);
 
-  const categories = ["Camera", "Lens", "Lighting", "Color"] as const;
+  const categories = ["Camera", "Lens", "Lighting", "Color", "Software"] as const;
 
   const getIcon = (cat: string) => {
     switch (cat) {
@@ -18,6 +18,7 @@ export default function Equipment() {
       case "Lens": return <Layers size={18} />;
       case "Lighting": return <Sun size={18} />;
       case "Color": return <Palette size={18} />;
+      case "Software": return <Monitor size={18} />;
       default: return null;
     }
   };

@@ -116,7 +116,7 @@ export default function Admin() {
       home_order: 0,
       project_type: "shoot",
       thumbnailUrl: "",
-      tech: { camera: "", lens: "", lighting: "", color: "" },
+      tech: { camera: "", lens: "", lighting: "", color: "", software: "" },
       videos: []
     };
 
@@ -130,7 +130,8 @@ export default function Admin() {
         camera: project.tech?.camera || project.tech_camera || "",
         lens: project.tech?.lens || project.tech_lens || "",
         lighting: project.tech?.lighting || project.tech_lighting || "",
-        color: project.tech?.color || project.tech_color || ""
+        color: project.tech?.color || project.tech_color || "",
+        software: project.tech?.software || project.tech_software || ""
       },
       videos: Array.isArray(project.videos) ? project.videos : []
     };
@@ -311,6 +312,8 @@ export default function Admin() {
     // Mandatory logs as requested
     console.log("project_type selected:", selectedProjectType)
     console.log("project payload:", payload)
+    console.log("saved tech software", payload.tech?.software);
+    console.log("project tech_software", payload.tech?.software);
     
     try {
       const res = await fetch(url, {
@@ -544,6 +547,7 @@ export default function Admin() {
     setIsSaving(true);
     const method = item.id ? "PUT" : "POST";
     const url = item.id ? `/api/equipment?id=${item.id}` : "/api/equipment";
+    console.log("equipment software", item.category === "Software" ? item.name : "");
     try {
       const res = await fetch(url, {
         method,
@@ -1028,10 +1032,10 @@ export default function Admin() {
                   {/* Tech Info */}
                   <div className="p-6 bg-black/5 space-y-4">
                     <h5 className="text-[10px] font-bold tracking-widest uppercase text-black/40">Technical Info</h5>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {["camera", "lens", "lighting", "color"].map((key) => (
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                      {["camera", "lens", "lighting", "color", "software"].map((key) => (
                         <div key={key}>
-                          <label className="block text-[8px] font-bold tracking-widest uppercase text-black/40 mb-1">{key}</label>
+                          <label className="block text-[8px] font-bold tracking-widest uppercase text-black/40 mb-1">{key === "software" ? "Editing Software" : key}</label>
                           <textarea
                             value={(editingProject.tech as any)?.[key] || ""}
                             onChange={(e) => setEditingProject({
@@ -1243,7 +1247,7 @@ export default function Admin() {
               </div>
 
               <div className="space-y-12">
-                {["Camera", "Lens", "Lighting", "Color"].map((cat) => (
+                {["Camera", "Lens", "Lighting", "Color", "Software"].map((cat) => (
                   <div key={cat} className="space-y-4">
                 <div className="flex items-center justify-between border-b border-black/10 pb-2">
                   <h4 className="text-sm font-bold tracking-widest uppercase">{cat}</h4>

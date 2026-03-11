@@ -41,13 +41,14 @@ export interface ProjectData {
     lens: string;
     lighting: string;
     color: string;
+    software?: string;
   };
   videos: VideoData[];
 }
 
 export interface EquipmentItem {
   id?: number;
-  category: 'Camera' | 'Lens' | 'Lighting' | 'Color';
+  category: 'Camera' | 'Lens' | 'Lighting' | 'Color' | 'Software';
   name: string;
   note: string;
 }
