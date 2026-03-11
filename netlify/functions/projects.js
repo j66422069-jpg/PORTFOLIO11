@@ -49,7 +49,8 @@ export const handler = async (event) => {
             camera: project.tech_camera,
             lens: project.tech_lens,
             lighting: project.tech_lighting,
-            color: project.tech_color
+            color: project.tech_color,
+            software: project.tech_software
           },
           videos: videos.map(v => ({
             ...v,
@@ -79,7 +80,8 @@ export const handler = async (event) => {
             camera: p.tech_camera,
             lens: p.tech_lens,
             lighting: p.tech_lighting,
-            color: p.tech_color
+            color: p.tech_color,
+            software: p.tech_software
           }
         }));
 
@@ -137,6 +139,8 @@ export const handler = async (event) => {
 
     if (httpMethod === 'POST') {
       const { videos, tech, ...body } = payload;
+      console.log("payload tech software:", tech?.software, body.techSoftware, body.tech_software, body.software);
+
       const row = {
         title: body.title ?? "",
         description: body.description ?? null,
@@ -150,10 +154,13 @@ export const handler = async (event) => {
         tech_lens: tech?.lens ?? body.techLens ?? body.tech_lens ?? null,
         tech_lighting: tech?.lighting ?? body.techLighting ?? body.tech_lighting ?? null,
         tech_color: tech?.color ?? body.techColor ?? body.tech_color ?? null,
+        tech_software: tech?.software ?? body.techSoftware ?? body.tech_software ?? body.software ?? null,
         link: body.link ?? null,
         project_type: normalizedProjectType,
         updated_at: new Date().toISOString()
       };
+
+      console.log("saved tech_software:", row.tech_software);
 
       const { data: project, error: pError } = await supabase
         .from('projects')
@@ -189,6 +196,8 @@ export const handler = async (event) => {
       if (!id) throw new Error('ID is required');
 
       const { videos, tech, ...body } = payload;
+      console.log("payload tech software:", tech?.software, body.techSoftware, body.tech_software, body.software);
+
       const row = {
         title: body.title ?? "",
         description: body.description ?? null,
@@ -202,10 +211,13 @@ export const handler = async (event) => {
         tech_lens: tech?.lens ?? body.techLens ?? body.tech_lens ?? null,
         tech_lighting: tech?.lighting ?? body.techLighting ?? body.tech_lighting ?? null,
         tech_color: tech?.color ?? body.techColor ?? body.tech_color ?? null,
+        tech_software: tech?.software ?? body.techSoftware ?? body.tech_software ?? body.software ?? null,
         link: body.link ?? null,
         project_type: normalizedProjectType,
         updated_at: new Date().toISOString()
       };
+
+      console.log("saved tech_software:", row.tech_software);
 
       const { error: pError } = await supabase
         .from('projects')
