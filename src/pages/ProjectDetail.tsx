@@ -247,14 +247,14 @@ export default function ProjectDetail() {
                 <p className="text-sm font-bold whitespace-pre-line">{project.tech?.color || "—"}</p>
               </div>
             </div>
-            {project.tech?.software && (
+            {(project.tech?.software || project.tech_software) && (
               <div className="space-y-4">
                 <div className="w-10 h-10 bg-black/5 flex items-center justify-center rounded-full">
                   <Monitor size={18} className="text-black/60" />
                 </div>
                 <div>
                   <h4 className="text-[10px] font-bold tracking-widest text-black/40 uppercase mb-1">Editing Software</h4>
-                  <p className="text-sm font-bold whitespace-pre-line">{project.tech.software}</p>
+                  <p className="text-sm font-bold whitespace-pre-line">{project.tech?.software || project.tech_software}</p>
                 </div>
               </div>
             )}

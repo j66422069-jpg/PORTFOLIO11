@@ -223,6 +223,7 @@ async function startServer() {
       const project = db.prepare("SELECT * FROM projects WHERE id = ?").get(id) as any;
       if (project) {
         project.thumbnailUrl = project.thumbnail_url;
+        console.log("returned project tech_software", project.tech_software);
         project.tech = {
           camera: project.tech_camera,
           lens: project.tech_lens,
@@ -242,17 +243,20 @@ async function startServer() {
     }
     // Ensure consistent sorting: sort_order ASC, nulls last
     const projects = db.prepare("SELECT * FROM projects WHERE title IS NOT NULL AND title != '' ORDER BY CASE WHEN sort_order IS NULL THEN 1 ELSE 0 END, sort_order ASC, id DESC").all() as any[];
-    const transformed = projects.map(p => ({
-      ...p,
-      thumbnailUrl: p.thumbnail_url,
-      tech: {
-        camera: p.tech_camera,
-        lens: p.tech_lens,
-        lighting: p.tech_lighting,
-        color: p.tech_color,
-        software: p.tech_software
-      }
-    }));
+    const transformed = projects.map(p => {
+      console.log("returned project tech_software", p.tech_software);
+      return {
+        ...p,
+        thumbnailUrl: p.thumbnail_url,
+        tech: {
+          camera: p.tech_camera,
+          lens: p.tech_lens,
+          lighting: p.tech_lighting,
+          color: p.tech_color,
+          software: p.tech_software
+        }
+      };
+    });
     res.json(transformed);
   });
 
@@ -260,6 +264,7 @@ async function startServer() {
     const project = db.prepare("SELECT * FROM projects WHERE id = ?").get(req.params.id) as any;
     if (project) {
       project.thumbnailUrl = project.thumbnail_url;
+      console.log("returned project tech_software", project.tech_software);
       project.tech = {
         camera: project.tech_camera,
         lens: project.tech_lens,
@@ -307,6 +312,9 @@ async function startServer() {
       console.log("body.type", body.type);
       console.log("normalizedProjectType", normalizedProjectType);
 
+      const tech = body.tech;
+      console.log("payload tech software", tech?.software, body.techSoftware, body.tech_software, body.software);
+
       const row = {
         title: title,
         year: body.year ?? null,
@@ -319,7 +327,7 @@ async function startServer() {
         tech_lens: body.techLens ?? body.tech?.lens ?? body.tech_lens ?? null,
         tech_lighting: body.techLighting ?? body.tech?.lighting ?? body.tech_lighting ?? null,
         tech_color: body.techColor ?? body.tech?.color ?? body.tech_color ?? null,
-        tech_software: body.techSoftware ?? body.tech?.software ?? body.tech_software ?? null,
+        tech_software: tech?.software ?? body.techSoftware ?? body.tech_software ?? body.software ?? null,
         link: body.link ?? null,
         description: description || null,
         sort_order: body.sort_order ?? 0,
@@ -328,6 +336,7 @@ async function startServer() {
         updated_at: new Date().toISOString()
       };
 
+      console.log("saved row tech_software", row.tech_software);
       console.log("row", row);
 
       const info = db.prepare(`
@@ -387,6 +396,9 @@ async function startServer() {
       console.log("body.type", body.type);
       console.log("normalizedProjectType", normalizedProjectType);
 
+      const tech = body.tech;
+      console.log("payload tech software", tech?.software, body.techSoftware, body.tech_software, body.software);
+
       const row = {
         title: title,
         year: body.year ?? null,
@@ -399,7 +411,7 @@ async function startServer() {
         tech_lens: body.techLens ?? body.tech?.lens ?? body.tech_lens ?? null,
         tech_lighting: body.techLighting ?? body.tech?.lighting ?? body.tech_lighting ?? null,
         tech_color: body.techColor ?? body.tech?.color ?? body.tech_color ?? null,
-        tech_software: body.techSoftware ?? body.tech?.software ?? body.tech_software ?? null,
+        tech_software: tech?.software ?? body.techSoftware ?? body.tech_software ?? body.software ?? null,
         link: body.link ?? null,
         description: description || null,
         sort_order: body.sort_order !== undefined ? body.sort_order : 0,
@@ -408,6 +420,7 @@ async function startServer() {
         updated_at: new Date().toISOString()
       };
 
+      console.log("saved row tech_software", row.tech_software);
       console.log("row", row);
 
       const result = db.prepare(`
@@ -483,6 +496,9 @@ async function startServer() {
       console.log("body.type", body.type);
       console.log("normalizedProjectType", normalizedProjectType);
 
+      const tech = body.tech;
+      console.log("payload tech software", tech?.software, body.techSoftware, body.tech_software, body.software);
+
       const row = {
         title: title,
         year: body.year ?? null,
@@ -495,7 +511,7 @@ async function startServer() {
         tech_lens: body.techLens ?? body.tech?.lens ?? body.tech_lens ?? null,
         tech_lighting: body.techLighting ?? body.tech?.lighting ?? body.tech_lighting ?? null,
         tech_color: body.techColor ?? body.tech?.color ?? body.tech_color ?? null,
-        tech_software: body.techSoftware ?? body.tech?.software ?? body.tech_software ?? null,
+        tech_software: tech?.software ?? body.techSoftware ?? body.tech_software ?? body.software ?? null,
         link: body.link ?? null,
         description: description || null,
         sort_order: body.sort_order !== undefined ? body.sort_order : 0,
@@ -504,6 +520,7 @@ async function startServer() {
         updated_at: new Date().toISOString()
       };
 
+      console.log("saved row tech_software", row.tech_software);
       console.log("row", row);
 
       const result = db.prepare(`
