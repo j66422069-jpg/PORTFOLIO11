@@ -10,15 +10,14 @@ export default function Equipment() {
     fetchEquipment();
   }, [fetchEquipment]);
 
-  const categories = ["Camera", "Lens", "Lighting", "Color", "Software"] as const;
+  const displayCategories = ["Camera", "Lens", "Lighting", "Color / Software"] as const;
 
   const getIcon = (cat: string) => {
     switch (cat) {
       case "Camera": return <Camera size={18} />;
       case "Lens": return <Layers size={18} />;
       case "Lighting": return <Sun size={18} />;
-      case "Color": return <Palette size={18} />;
-      case "Software": return <Monitor size={18} />;
+      case "Color / Software": return <Palette size={18} />;
       default: return null;
     }
   };
@@ -43,8 +42,11 @@ export default function Equipment() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          {categories.map((cat) => {
-            const catItems = items.filter(i => i.category === cat);
+          {displayCategories.map((cat) => {
+            const catItems = cat === "Color / Software"
+              ? items.filter(i => i.category === "Color" || i.category === "Software")
+              : items.filter(i => i.category === cat as any);
+            
             return (
               <div key={cat} className="space-y-8">
                 <div className="flex items-center gap-3 pb-4 border-b border-black/10">
@@ -58,12 +60,14 @@ export default function Equipment() {
                   {catItems.length > 0 ? (
                     catItems.map((item) => (
                       <div key={item.id} className="group">
-                        <h4 className="text-lg font-bold tracking-tight mb-2 group-hover:text-black/60 transition-colors">
+                        <h4 className="text-lg font-bold tracking-tight mb-2 group-hover:text-black/60 transition-colors whitespace-pre-line">
                           {item.name}
                         </h4>
-                        <p className="text-sm text-black/50 leading-relaxed italic">
-                          "{item.note}"
-                        </p>
+                        {item.note && (
+                          <p className="text-sm text-black/50 leading-relaxed italic whitespace-pre-line">
+                            "{item.note}"
+                          </p>
+                        )}
                       </div>
                     ))
                   ) : (
