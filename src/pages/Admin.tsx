@@ -360,8 +360,15 @@ export default function Admin() {
     
     [newProjects[index], newProjects[targetIndex]] = [newProjects[targetIndex], newProjects[index]];
     
-    // Update sort_order for all items based on their new index
-    const updated = newProjects.map((p, idx) => ({ ...p, sort_order: idx + 1 }));
+    // Update sort_order ONLY for the current type
+    const typeProjects = newProjects.filter(p => (p.project_type || 'shoot') === adminProjectFilter);
+    const updated = newProjects.map(proj => {
+      if ((proj.project_type || 'shoot') === adminProjectFilter) {
+        const typeIndex = typeProjects.findIndex(p => p.id === proj.id);
+        return { ...proj, sort_order: typeIndex + 1 };
+      }
+      return proj;
+    });
     
     setProjects(updated);
     setHasOrderChanged(true);
@@ -410,15 +417,18 @@ export default function Admin() {
       return true;
     });
     
-    // 2. Create payload with ONLY id and sort_order
-    const payload = validProjects.map((p, index) => ({
+    // 2. Filter by current type and create payload with ONLY id and sort_order
+    const typeProjects = validProjects.filter(p => (p.project_type || 'shoot') === adminProjectFilter);
+    const payload = typeProjects.map((p, index) => ({
       id: p.id,
-      sort_order: index + 1
+      sort_order: index + 1,
+      project_type: adminProjectFilter
     }));
     
     // 3. Mandatory console logs
     console.log("REORDER SAVE TRIGGERED");
-    console.log("Payload:", payload);
+    console.log("reorder selected type", adminProjectFilter);
+    console.log("reorder payload", payload);
     
     if (payload.length === 0) {
       alert("저장할 유효한 프로젝트가 없습니다.");
@@ -445,7 +455,7 @@ export default function Admin() {
       updateProjects(projects);
       
       setHasOrderChanged(false);
-      alert("전체 프로젝트 순서가 저장되었습니다.");
+      alert(`${adminProjectFilter === 'shoot' ? '촬영' : '편집'} 프로젝트 순서가 저장되었습니다.`);
     } catch (error: any) {
       console.error("Save Project Order error:", error);
       alert(`순서 저장 실패: ${error.message}`);
@@ -1152,7 +1162,17 @@ export default function Admin() {
                                 const prevOriginalIndex = projects.findIndex(proj => proj.id === prevInFiltered.id);
                                 const newProjects = [...projects];
                                 [newProjects[originalIndex], newProjects[prevOriginalIndex]] = [newProjects[prevOriginalIndex], newProjects[originalIndex]];
-                                const updated = newProjects.map((proj, idx) => ({ ...proj, sort_order: idx + 1 }));
+                                
+                                // Update sort_order ONLY for the current type
+                                const typeProjects = newProjects.filter(p => (p.project_type || 'shoot') === adminProjectFilter);
+                                const updated = newProjects.map(proj => {
+                                  if ((proj.project_type || 'shoot') === adminProjectFilter) {
+                                    const typeIndex = typeProjects.findIndex(p => p.id === proj.id);
+                                    return { ...proj, sort_order: typeIndex + 1 };
+                                  }
+                                  return proj;
+                                });
+                                
                                 setProjects(updated);
                                 setHasOrderChanged(true);
                               }
@@ -1170,7 +1190,17 @@ export default function Admin() {
                                 const nextOriginalIndex = projects.findIndex(proj => proj.id === nextInFiltered.id);
                                 const newProjects = [...projects];
                                 [newProjects[originalIndex], newProjects[nextOriginalIndex]] = [newProjects[nextOriginalIndex], newProjects[originalIndex]];
-                                const updated = newProjects.map((proj, idx) => ({ ...proj, sort_order: idx + 1 }));
+                                
+                                // Update sort_order ONLY for the current type
+                                const typeProjects = newProjects.filter(p => (p.project_type || 'shoot') === adminProjectFilter);
+                                const updated = newProjects.map(proj => {
+                                  if ((proj.project_type || 'shoot') === adminProjectFilter) {
+                                    const typeIndex = typeProjects.findIndex(p => p.id === proj.id);
+                                    return { ...proj, sort_order: typeIndex + 1 };
+                                  }
+                                  return proj;
+                                });
+                                
                                 setProjects(updated);
                                 setHasOrderChanged(true);
                               }

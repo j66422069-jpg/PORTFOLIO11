@@ -565,9 +565,12 @@ async function startServer() {
 
   app.post("/api/projects/reorder", (req, res) => {
     try {
-      const orders = req.body; // Array of { id: number, sort_order: number }
+      const orders = req.body; // Array of { id: number, sort_order: number, project_type?: string }
       
       console.log("REORDER API PAYLOAD", orders);
+      if (orders.length > 0 && orders[0].project_type) {
+        console.log("updating only this type", orders[0].project_type);
+      }
       console.log("REORDER UPDATE ONLY");
       console.log("NO INSERT / NO UPSERT");
 
@@ -575,14 +578,15 @@ async function startServer() {
         return res.status(400).json({ error: "Invalid orders format. Expected a non-empty array." });
       }
 
-      // Strict check: only id and sort_order allowed
+      // Strict check: only id, sort_order, and optional project_type allowed
       for (const item of orders) {
         const keys = Object.keys(item);
         if (!item.id || item.sort_order === undefined) {
           return res.status(400).json({ error: "Each item must have an id and sort_order." });
         }
-        if (keys.length > 2) {
-          return res.status(400).json({ error: "Reorder payload must only contain id and sort_order." });
+        // Allow project_type in keys
+        if (keys.length > 3) {
+          return res.status(400).json({ error: "Reorder payload must only contain id, sort_order, and project_type." });
         }
       }
 
